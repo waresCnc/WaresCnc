@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>WARES CNC - Generador 3D Pro</title>
+    <script src="https://cdnjs.cloudflare.com"></script>
+    <style>
+        :root { --wares-orange: #ff6600; --bg: #0a0a0a; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
+        #panel { width: 320px; padding: 20px; background: #151515; border-right: 3px solid var(--wares-orange); overflow-y: auto; z-index: 10; }
+        .header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 20px; color: var(--wares-orange); text-transform: uppercase; margin: 0; }
+        .control-group { background: #222; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        label { display: block; font-size: 10px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #000; color: var(--wares-orange); box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: var(--wares-orange); border: none; color: black; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 15px; text-transform: uppercase; }
+        #viewer { flex-grow: 1; background: #000; }
+    </style>
+</head>
+<body>
+<div id="panel">
+    <div class="header"><h1>WARES CNC</h1></div>
+    <div class="control-group"><label>Imagen</label><input type="file" id="upload" accept="image/*"></div>
+    <div class="control-group">
+        <label>Ancho X / Largo Y (mm)</label>
+        <div style="display: flex; gap: 5px;"><input type="number" id="widthX" value="100"><input type="number" id="lengthY" value="100"></div>
+        <label style="margin-top:10px">Z Total (mm)</label><input type="number" id="depthZ" value="3">
+        <label style="margin-top:10px">Z por Pasada (mm)</label><input type="number" id="stepZ" value="1">
+    </div>
+    <button onclick="processImage()">GENERAR G-CODE MACH3</button>
+</div>
+<div id="viewer"></div>
+<script>
+let scene, camera, renderer, mesh, frameId;
+function init3D() {
+    scene = new THREE.Scene();
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth - 320, window.innerHeight);
+    document.getElementById('viewer').appendChild(renderer.domElement);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+}
+function processImage() {
+    const file = document.getElementById('upload').files[0];
+    if (!file) return alert("Sube una foto");
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 60; canvas.height = Math.round((img.height / img.width) * 60);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        render3D(data, canvas.width, canvas.height);
+        generateG(data, canvas.width, canvas.height);
+    };
+}
+function render3D(data, w, h) {
+    if (mesh) scene.remove(mesh);
+    const geometry = new THREE.PlaneGeometry(w, h, w - 1, h - 1);
+    const zScale = parseFloat(document.getElementById('depthZ').value);
+    for (let i = 0; i < geometry.attributes.position.count; i++) {
+        const b = (data[i*4] + data[i*4+1] + data[i*4+2]) / 3;
+        geometry.attributes.position.setZ(i, (b / 255) * zScale * 2);
+    }
+    mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: 0xff6600, wireframe: true }));
+    scene.add(mesh);
+    camera = new THREE.PerspectiveCamera(45, (window.innerWidth-320)/window.innerHeight, 1, 1000);
+    camera.position.set(0, -h, w); camera.lookAt(0,0,0);
+    const anim = () => { frameId = requestAnimationFrame(anim); mesh.rotation.z += 0.005; renderer.render(scene, camera); };
+    anim();
+}
+function generateG(data, w, h) {
+    const mmX = document.getElementById('widthX').value, mmY = document.getElementById('lengthY').value;
+    const totalZ = parseFloat(document.getElementById('depthZ').value), stepZ = parseFloat(document.getElementById('stepZ').value);
+    let g = "G21\nG90\nG64\nM3 S15000\n";
+    for (let cZ = stepZ; cZ <= totalZ + 0.01; cZ += stepZ) {
+        let lim = Math.min(cZ, totalZ);
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                let i = (y * w + x) * 4;
+                let b = (data[i] + data[i+1] + data[i+2]) / 3;
+                let zV = Math.max(-((255-b)/255*totalZ), -lim).toFixed(3);
+                g += `G1 X${(x*mmX/w).toFixed(2)} Y${(-(y*mmY/h)).toFixed(2)} Z${zV} F1000\n`;
+            }
+        }
+    }
+    g += "G0 Z10\nM30";
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([g], {type: 'text/plain'}));
+    a.download = "WARES_CNC.txt"; a.click();
+}
+init3D();
+</script>
+</body>
+</html>
