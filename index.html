@@ -1,409 +1,1227 @@
-<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Essay Generator</title></head><body><p>&lt;!DOCTYPE html&gt;</p>
-<p>&lt;html lang="es"&gt;</p>
-<p>&lt;head&gt;</p>
-<p>&nbsp; &nbsp; &lt;meta charset="UTF-8"&gt;</p>
-<p>&nbsp; &nbsp; &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p>&nbsp; &nbsp; &lt;title&gt;WARES CNC PRO - Panel de Control&lt;/title&gt;</p>
-<p>&nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &lt;!-- Tailwind CSS para estilos modernos --&gt;</p>
-<p>&nbsp; &nbsp; &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
-<p>&nbsp; &nbsp; &lt;script&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; tailwind.config = {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; theme: {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; extend: {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; colors: {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; wares: {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; accent: '#ff6600',</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; hover: '#ff8533',</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; bg: '#0a0a0a',</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; panel: '#121212',</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; border: '#333333'</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &lt;/script&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &lt;!-- Three.js y OrbitControls para visualización 3D --&gt;</p>
-<p>&nbsp; &nbsp; &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"&gt;&lt;/script&gt;</p>
-<p>&nbsp; &nbsp; &lt;script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"&gt;&lt;/script&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &lt;style&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; /* Estilos personalizados adicionales */</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; input[type="number"], input[type="file"] {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; color-scheme: dark;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; /* Custom scrollbar para el sidebar */</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; ::-webkit-scrollbar { width: 8px; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; ::-webkit-scrollbar-track { background: #121212; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; ::-webkit-scrollbar-thumb:hover { background: #ff6600; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; .toast-enter { transform: translateY(100%); opacity: 0; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; .toast-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }</p>
-<p>&nbsp; &nbsp; &lt;/style&gt;</p>
-<p>&lt;/head&gt;</p>
-<p>&lt;body class="bg-wares-bg text-gray-200 font-sans h-screen flex flex-col overflow-hidden"&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &lt;!-- Header --&gt;</p>
-<p>&nbsp; &nbsp; &lt;header class="bg-wares-panel border-b border-wares-accent p-4 text-center z-20 shadow-md flex justify-between items-center px-6"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;h1 class="text-2xl font-black text-wares-accent tracking-widest m-0"&gt;WARES CNC &lt;span class="text-white"&gt;PRO&lt;/span&gt;&lt;/h1&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="text-xs text-gray-400 flex items-center gap-2"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"&gt;&lt;/span&gt; Sistema Listo</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &lt;/header&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &lt;!-- Main Layout --&gt;</p>
-<p>&nbsp; &nbsp; &lt;div class="flex flex-1 overflow-hidden flex-col md:flex-row"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;!-- Sidebar Controls --&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;aside class="w-full md:w-80 bg-wares-panel border-r border-wares-border p-6 overflow-y-auto flex-shrink-0 z-10 shadow-2xl"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="space-y-6"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;!-- Sección 1: Imagen --&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="space-y-2"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label class="block text-xs font-bold text-gray-400 uppercase tracking-wider"&gt;1. Cargar Foto / Logo&lt;/label&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="relative group"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="absolute inset-0 bg-wares-accent/10 rounded border-2 border-dashed border-wares-accent/50 group-hover:border-wares-accent transition-colors"&gt;&lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="file" id="foto" accept="image/*" class="relative z-10 w-full p-4 opacity-0 cursor-pointer h-full" onchange="previewImage(event)"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="absolute inset-0 flex items-center justify-center pointer-events-none text-wares-accent text-sm font-medium"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span id="file-name"&gt;Haz clic o arrastra una imagen&lt;/span&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div id="image-preview-container" class="hidden mt-2 rounded border border-wares-border overflow-hidden bg-black flex justify-center p-2"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;img id="image-preview" class="max-h-32 object-contain mix-blend-screen" /&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;!-- Sección 2: Parámetros Dimensionales --&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="space-y-4 pt-4 border-t border-wares-border"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;h3 class="text-sm font-bold text-white uppercase"&gt;Dimensiones (mm)&lt;/h3&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label class="block text-xs text-gray-400 uppercase mb-1"&gt;Ancho Total (X)&lt;/label&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="flex items-center"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="number" id="anchoX" value="100" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="ml-2 text-xs text-gray-500 font-bold"&gt;mm&lt;/span&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="grid grid-cols-2 gap-3"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label class="block text-xs text-gray-400 uppercase mb-1"&gt;Profundidad (Z)&lt;/label&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="number" id="proZ" value="2" step="0.1" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label class="block text-xs text-gray-400 uppercase mb-1"&gt;Paso Z (mm)&lt;/label&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="number" id="stepZ" value="1" step="0.1" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;!-- Sección 3: Parámetros de Máquina --&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="space-y-4 pt-4 border-t border-wares-border"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;h3 class="text-sm font-bold text-white uppercase"&gt;Máquina / Avances&lt;/h3&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="grid grid-cols-2 gap-3"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label class="block text-xs text-gray-400 uppercase mb-1"&gt;Avance (F)&lt;/label&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="number" id="feedRate" value="1000" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label class="block text-xs text-gray-400 uppercase mb-1"&gt;Huso (S)&lt;/label&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="number" id="spindleSpeed" value="15000" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label class="block text-xs text-gray-400 uppercase mb-1"&gt;Resolución Malla&lt;/label&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;select id="resolution" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;option value="60"&gt;Rápida (60px)&lt;/option&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;option value="120" selected&gt;Media (120px)&lt;/option&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;option value="200"&gt;Alta (200px - Lento)&lt;/option&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/select&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;!-- Botones de Acción --&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="pt-6"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;button onclick="procesar()" class="w-full py-4 bg-wares-accent hover:bg-wares-hover text-black text-sm font-black tracking-widest rounded shadow-[0_0_15px_rgba(255,102,0,0.3)] transition-all transform active:scale-95 uppercase"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Generar Mach3 G-Code</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/button&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;p class="text-[10px] text-gray-500 mt-4 text-center tracking-wider"&gt;MECANIZADO 3D OPTIMIZADO - ZIGZAG&lt;/p&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/aside&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;!-- 3D Viewer --&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;main id="viewer-container" class="flex-1 relative bg-black cursor-move"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;!-- Canvas se inyecta aquí --&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div id="viewer-overlay" class="absolute inset-0 pointer-events-none flex items-center justify-center"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="text-wares-border text-2xl font-black tracking-widest uppercase opacity-30 select-none"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Previsualización 3D</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur text-xs p-2 rounded border border-wares-border text-gray-400 select-none pointer-events-none"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="text-wares-accent"&gt;Click izq:&lt;/span&gt; Rotar | &lt;span class="text-wares-accent"&gt;Click der:&lt;/span&gt; Mover | &lt;span class="text-wares-accent"&gt;Rueda:&lt;/span&gt; Zoom</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/main&gt;</p>
-<p>&nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &lt;!-- Sistema de Notificaciones (Toast) --&gt;</p>
-<p>&nbsp; &nbsp; &lt;div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white px-6 py-3 rounded-full shadow-2xl border border-neutral-700 flex items-center gap-3 toast-enter z-50 pointer-events-none"&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;svg class="w-5 h-5 text-wares-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;span id="toast-message" class="text-sm font-medium"&gt;Notificación&lt;/span&gt;</p>
-<p>&nbsp; &nbsp; &lt;/div&gt;</p>
-<p>&nbsp;</p>
-<p>&lt;script&gt;</p>
-<p>&nbsp; &nbsp; // Variables globales Three.js</p>
-<p>&nbsp; &nbsp; let scene, camera, renderer, mesh, controls, helperGroup;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; // Inicialización de la vista 3D</p>
-<p>&nbsp; &nbsp; function init3D() {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const container = document.getElementById('viewer-container');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; scene = new THREE.Scene();</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; scene.background = new THREE.Color('#050505');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Grupo para rotar fácilmente</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; helperGroup = new THREE.Group();</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; scene.add(helperGroup);</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Cámara</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 2000);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; camera.position.set(0, -100, 100);</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Renderizador</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; renderer.setSize(container.clientWidth, container.clientHeight);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; renderer.setPixelRatio(window.devicePixelRatio);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; container.appendChild(renderer.domElement);</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Controles de cámara</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; controls = new THREE.OrbitControls(camera, renderer.domElement);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; controls.enableDamping = true;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; controls.dampingFactor = 0.05;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; controls.maxPolarAngle = Math.PI / 2 + 0.1; // No dejar ver mucho por debajo</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Luces</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; scene.add(ambientLight);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; dirLight.position.set(50, 50, 100);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; scene.add(dirLight);</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Grid (Plano de trabajo)</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const grid = new THREE.GridHelper(200, 20, 0x444444, 0x222222);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; grid.rotation.x = Math.PI / 2; // Alinear con XY (Máquina CNC tradicional)</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; scene.add(grid);</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Ejes</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const axesHelper = new THREE.AxesHelper( 50 );</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; scene.add( axesHelper );</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Loop de renderizado</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; animate();</p>
-<p>&nbsp; &nbsp; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; function animate() {&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; requestAnimationFrame(animate);&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; controls.update(); // Necesario para damping</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; renderer.render(scene, camera);&nbsp;</p>
-<p>&nbsp; &nbsp; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; // Adaptación a cambios de tamaño de ventana</p>
-<p>&nbsp; &nbsp; window.addEventListener('resize', () =&gt; {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const container = document.getElementById('viewer-container');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; if(!container) return;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; camera.aspect = container.clientWidth / container.clientHeight;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; camera.updateProjectionMatrix();</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; renderer.setSize(container.clientWidth, container.clientHeight);</p>
-<p>&nbsp; &nbsp; });</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; // Utilidad de notificaciones</p>
-<p>&nbsp; &nbsp; function showToast(msg) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const toast = document.getElementById('toast');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; document.getElementById('toast-message').textContent = msg;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; toast.classList.add('toast-active');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; toast.classList.remove('toast-enter');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; setTimeout(() =&gt; {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; toast.classList.remove('toast-active');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; toast.classList.add('toast-enter');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; }, 3000);</p>
-<p>&nbsp; &nbsp; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; // Previsualizar la imagen cargada</p>
-<p>&nbsp; &nbsp; function previewImage(event) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const file = event.target.files[0];</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; if(!file) return;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; document.getElementById('file-name').textContent = file.name;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; document.getElementById('file-name').classList.replace('text-wares-accent', 'text-green-500');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const reader = new FileReader();</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; reader.onload = function(e) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const preview = document.getElementById('image-preview');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; preview.src = e.target.result;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; document.getElementById('image-preview-container').classList.remove('hidden');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; reader.readAsDataURL(file);</p>
-<p>&nbsp; &nbsp; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; // Función principal de procesamiento</p>
-<p>&nbsp; &nbsp; function procesar() {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const file = document.getElementById('foto').files[0];</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; if (!file) return showToast("⚠️ Por favor, sube una foto primero.");</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; showToast("Procesando imagen y generando trayectoria...");</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; document.getElementById('viewer-overlay').style.display = 'none';</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const reader = new FileReader();</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; reader.onload = function(e) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const img = new Image();</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; img.src = e.target.result;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; img.onload = function() {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const canvas = document.createElement('canvas');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const ctx = canvas.getContext('2d');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Resolución de procesamiento basada en el selector</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const resW = parseInt(document.getElementById('resolution').value);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; canvas.width = resW;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; canvas.height = Math.round((img.height/img.width) * resW);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Dibujar en canvas para extraer pixeles</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ctx.drawImage(img, 0, 0, canvas.width, canvas.height);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; crear3D(data, canvas.width, canvas.height);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; crearGCode(data, canvas.width, canvas.height, img.height/img.width);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; };</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; reader.readAsDataURL(file);</p>
-<p>&nbsp; &nbsp; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; // Generar representación 3D de la trayectoria</p>
-<p>&nbsp; &nbsp; function crear3D(data, w, h) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; if(mesh) helperGroup.remove(mesh);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const mmX = parseFloat(document.getElementById('anchoX').value);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const mmY = mmX * (h/w);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const zM = parseFloat(document.getElementById('proZ').value);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Geometría plana con las dimensiones físicas a escala</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const geo = new THREE.PlaneGeometry(mmX, mmY, w-1, h-1);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Modificar los vértices Z basados en el color (0 negro -&gt; fondo total, 255 blanco -&gt; Z0)</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; for(let i=0; i &lt; geo.attributes.position.count; i++) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Promedio RGB para escala de grises</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const b = (data[i*4] + data[i*4+1] + data[i*4+2]) / 3;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Profundidad: blanco (255) = 0, negro (0) = -zM</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const depth = -((255 - b) / 255) * zM;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; geo.attributes.position.setZ(i, depth);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; geo.computeVertexNormals();</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Material combinado (Sólido + Wireframe)</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const material = new THREE.MeshStandardMaterial({</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; color: 0xff6600,&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; roughness: 0.4,</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; metalness: 0.8,</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; side: THREE.DoubleSide</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; });</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; mesh = new THREE.Mesh(geo, material);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Centrar la malla en el origen para que la rotación sea natural</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // En CNC el origen (0,0) suele ser una esquina, desplazamos la malla para visualización</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; mesh.position.set(mmX/2, -mmY/2, 0);&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; helperGroup.add(mesh);</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Ajustar cámara para que encuadre el objeto</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const maxDim = Math.max(mmX, mmY);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; camera.position.set(mmX/2, -mmY/2 - (maxDim*0.5), maxDim * 1.2);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; controls.target.set(mmX/2, -mmY/2, -zM/2);</p>
-<p>&nbsp; &nbsp; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; // Generador de G-Code optimizado</p>
-<p>&nbsp; &nbsp; function crearGCode(data, w, h, ratio) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const mmX = parseFloat(document.getElementById('anchoX').value);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const mmY = mmX * ratio;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const totalZ = parseFloat(document.getElementById('proZ').value);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const stepZ = parseFloat(document.getElementById('stepZ').value);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const fRate = document.getElementById('feedRate').value;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const sSpeed = document.getElementById('spindleSpeed').value;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; let g = `(WARES CNC PRO - MECANIZADO 3D)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `(Dimensiones: X=${mmX.toFixed(2)}mm, Y=${mmY.toFixed(2)}mm, Profundidad=${totalZ}mm)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `G21 (Milimetros)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `G90 (Coordenadas Absolutas)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `G64 (Modo de Velocidad Constante)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `M3 S${sSpeed} (Encender Huso)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `G0 Z5.000 (Subir a Z de seguridad)\n\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Ciclo de pasadas de profundidad</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; for(let cZ = stepZ; cZ &lt;= totalZ + 0.01; cZ += stepZ) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let lim = Math.min(cZ, totalZ);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; g += `(--- PASADA Z = -${lim.toFixed(3)} ---)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Estrategia Zig-Zag para ahorrar tiempo en vaciados</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; for(let y = 0; y &lt; h; y++) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Determinar dirección (0=Izq a Der, 1=Der a Izq)</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const isEven = (y % 2 === 0);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const startX = isEven ? 0 : w - 1;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const endX = isEven ? w : -1;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const stepX = isEven ? 1 : -1;</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Mover a Y y X inicial de la línea en rápido si es el inicio de la pasada</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if(y === 0) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;g += `G0 X0.00 Y0.00\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; for(let x = startX; x !== endX; x += stepX) {</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let i = (y * w + x) * 4;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let b = (data[i] + data[i+1] + data[i+2]) / 3;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Calcular Z final del pixel. Limitado por la profundidad de pasada actual 'lim'</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let targetZ = -((255 - b) / 255 * totalZ);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let zV = Math.max(targetZ, -lim).toFixed(3);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let posX = (x * mmX / (w - 1)).toFixed(3);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Y es negativo porque en la pantalla Y crece hacia abajo,&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // en CNC tradicional Y+ es hacia el fondo, pero mapear imágenes suele implicar Y negativo.</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let posY = (-(y * mmY / (h - 1))).toFixed(3);&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; g += `G1 X${posX} Y${posY} Z${zV} F${fRate}\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `\n(FIN DEL PROGRAMA)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `G0 Z10.000\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `G0 X0.00 Y0.00\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `M5 (Apagar Huso)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; g += `M30 (Fin del programa y rebobinar)\n`;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; // Descargar Archivo</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const blob = new Blob([g], {type: 'text/plain'});</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; const a = document.createElement('a');</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; a.href = URL.createObjectURL(blob);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; a.download = "WARES_CNC_PROGRAMA.nc"; // Extension típica CNC (.nc, .tap o .txt)</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; document.body.appendChild(a);&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; a.click();&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; document.body.removeChild(a);</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; showToast("✅ Archivo G-Code generado y descargado");</p>
-<p>&nbsp; &nbsp; }</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; // Iniciar 3D al cargar</p>
-<p>&nbsp; &nbsp; window.onload = init3D;</p>
-<p>&nbsp;</p>
-<p>&lt;/script&gt;</p>
-<p>&lt;/body&gt;</p>
-<p>&lt;/html&gt;</p></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WARES CNC PRO - Panel de Control</title>
+    
+    <!-- Tailwind CSS para estilos modernos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wares: {
+                            accent: '#ff6600',
+                            hover: '#ff8533',
+                            bg: '#0a0a0a',
+                            panel: '#121212',
+                            border: '#333333'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Three.js y OrbitControls para visualización 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        /* Estilos personalizados adicionales */
+        input[type="number"], input[type="file"] {
+            color-scheme: dark;
+        }
+        
+        /* Custom scrollbar para el sidebar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff6600; }
+
+        .toast-enter { transform: translateY(100%); opacity: 0; }
+        .toast-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
+    </style>
+</head>
+<body class="bg-wares-bg text-gray-200 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-wares-panel border-b border-wares-accent p-4 text-center z-20 shadow-md flex justify-between items-center px-6">
+        <h1 class="text-2xl font-black text-wares-accent tracking-widest m-0">WARES CNC <span class="text-white">PRO</span></h1>
+        <div class="text-xs text-gray-400 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Sistema Listo
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="flex flex-1 overflow-hidden flex-col md:flex-row">
+        
+        <!-- Sidebar Controls -->
+        <aside class="w-full md:w-80 bg-wares-panel border-r border-wares-border p-6 overflow-y-auto flex-shrink-0 z-10 shadow-2xl">
+            
+            <div class="space-y-6">
+                <!-- Sección 1: Imagen -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">1. Cargar Foto / Logo</label>
+                    <div class="relative group">
+                        <div class="absolute inset-0 bg-wares-accent/10 rounded border-2 border-dashed border-wares-accent/50 group-hover:border-wares-accent transition-colors"></div>
+                        <input type="file" id="foto" accept="image/*" class="relative z-10 w-full p-4 opacity-0 cursor-pointer h-full" onchange="previewImage(event)">
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-wares-accent text-sm font-medium">
+                            <span id="file-name">Haz clic o arrastra una imagen</span>
+                        </div>
+                    </div>
+                    <div id="image-preview-container" class="hidden mt-2 rounded border border-wares-border overflow-hidden bg-black flex justify-center p-2">
+                        <img id="image-preview" class="max-h-32 object-contain mix-blend-screen" />
+                    </div>
+                </div>
+
+                <!-- Sección 2: Parámetros Dimensionales -->
+                <div class="space-y-4 pt-4 border-t border-wares-border">
+                    <h3 class="text-sm font-bold text-white uppercase">Dimensiones (mm)</h3>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Ancho Total (X)</label>
+                        <div class="flex items-center">
+                            <input type="number" id="anchoX" value="100" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                            <span class="ml-2 text-xs text-gray-500 font-bold">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Profundidad (Z)</label>
+                            <input type="number" id="proZ" value="2" step="0.1" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Paso Z (mm)</label>
+                            <input type="number" id="stepZ" value="1" step="0.1" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 3: Parámetros de Máquina -->
+                <div class="space-y-4 pt-4 border-t border-wares-border">
+                    <h3 class="text-sm font-bold text-white uppercase">Máquina / Avances</h3>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Avance (F)</label>
+                            <input type="number" id="feedRate" value="1000" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Huso (S)</label>
+                            <input type="number" id="spindleSpeed" value="15000" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Resolución Malla</label>
+                        <select id="resolution" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                            <option value="60">Rápida (60px)</option>
+                            <option value="120" selected>Media (120px)</option>
+                            <option value="200">Alta (200px - Lento)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="pt-6">
+                    <button onclick="procesar()" class="w-full py-4 bg-wares-accent hover:bg-wares-hover text-black text-sm font-black tracking-widest rounded shadow-[0_0_15px_rgba(255,102,0,0.3)] transition-all transform active:scale-95 uppercase">
+                        Generar Mach3 G-Code
+                    </button>
+                    <p class="text-[10px] text-gray-500 mt-4 text-center tracking-wider">MECANIZADO 3D OPTIMIZADO - ZIGZAG</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 3D Viewer -->
+        <main id="viewer-container" class="flex-1 relative bg-black cursor-move">
+            <!-- Canvas se inyecta aquí -->
+            <div id="viewer-overlay" class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                <div class="text-wares-border text-2xl font-black tracking-widest uppercase opacity-30 select-none">
+                    Previsualización 3D
+                </div>
+            </div>
+            
+            <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur text-xs p-2 rounded border border-wares-border text-gray-400 select-none pointer-events-none">
+                <span class="text-wares-accent">Click izq:</span> Rotar | <span class="text-wares-accent">Click der:</span> Mover | <span class="text-wares-accent">Rueda:</span> Zoom
+            </div>
+        </main>
+    </div>
+
+    <!-- Sistema de Notificaciones (Toast) -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white px-6 py-3 rounded-full shadow-2xl border border-neutral-700 flex items-center gap-3 toast-enter z-50 pointer-events-none">
+        <svg class="w-5 h-5 text-wares-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span id="toast-message" class="text-sm font-medium">Notificación</span>
+    </div>
+
+<script>
+    // Variables globales Three.js
+    let scene, camera, renderer, mesh, controls, helperGroup;
+
+    // Inicialización de la vista 3D
+    function init3D() {
+        const container = document.getElementById('viewer-container');
+        
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color('#050505');
+        
+        // Grupo para rotar fácilmente
+        helperGroup = new THREE.Group();
+        scene.add(helperGroup);
+
+        // Cámara
+        camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 2000);
+        camera.position.set(0, -100, 100);
+
+        // Renderizador
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Controles de cámara
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1; // No dejar ver mucho por debajo
+        
+        // Luces
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+        
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(50, 50, 100);
+        scene.add(dirLight);
+
+        // Grid (Plano de trabajo)
+        const grid = new THREE.GridHelper(200, 20, 0x444444, 0x222222);
+        grid.rotation.x = Math.PI / 2; // Alinear con XY (Máquina CNC tradicional)
+        scene.add(grid);
+
+        // Ejes
+        const axesHelper = new THREE.AxesHelper( 50 );
+        scene.add( axesHelper );
+
+        // Loop de renderizado
+        animate();
+    }
+
+    function animate() { 
+        requestAnimationFrame(animate); 
+        controls.update(); // Necesario para damping
+        renderer.render(scene, camera); 
+    }
+
+    // Adaptación a cambios de tamaño de ventana
+    window.addEventListener('resize', () => {
+        const container = document.getElementById('viewer-container');
+        if(!container) return;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    // Utilidad de notificaciones
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').textContent = msg;
+        toast.classList.add('toast-active');
+        toast.classList.remove('toast-enter');
+        
+        setTimeout(() => {
+            toast.classList.remove('toast-active');
+            toast.classList.add('toast-enter');
+        }, 3000);
+    }
+
+    // Previsualizar la imagen cargada
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+        
+        document.getElementById('file-name').textContent = file.name;
+        document.getElementById('file-name').classList.replace('text-wares-accent', 'text-green-500');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('image-preview');
+            preview.src = e.target.result;
+            document.getElementById('image-preview-container').classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+
+    // Función principal de procesamiento
+    function procesar() {
+        const file = document.getElementById('foto').files[0];
+        if (!file) return showToast("⚠️ Por favor, sube una foto primero.");
+        
+        showToast("Procesando imagen y generando trayectoria...");
+        document.getElementById('viewer-overlay').style.display = 'none';
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Resolución de procesamiento basada en el selector
+                const resW = parseInt(document.getElementById('resolution').value);
+                canvas.width = resW; 
+                canvas.height = Math.round((img.height/img.width) * resW);
+                
+                // Dibujar en canvas para extraer pixeles
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                
+                crear3D(data, canvas.width, canvas.height);
+                crearGCode(data, canvas.width, canvas.height, img.height/img.width);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Generar representación 3D de la trayectoria
+    function crear3D(data, w, h) {
+        if(mesh) helperGroup.remove(mesh);
+        
+        const mmX = parseFloat(document.getElementById('anchoX').value);
+        const mmY = mmX * (h/w);
+        const zM = parseFloat(document.getElementById('proZ').value);
+        
+        // Geometría plana con las dimensiones físicas a escala
+        const geo = new THREE.PlaneGeometry(mmX, mmY, w-1, h-1);
+        
+        // Modificar los vértices Z basados en el color (0 negro -> fondo total, 255 blanco -> Z0)
+        for(let i=0; i < geo.attributes.position.count; i++) {
+            // Promedio RGB para escala de grises
+            const b = (data[i*4] + data[i*4+1] + data[i*4+2]) / 3;
+            // Profundidad: blanco (255) = 0, negro (0) = -zM
+            const depth = -((255 - b) / 255) * zM;
+            geo.attributes.position.setZ(i, depth);
+        }
+        
+        geo.computeVertexNormals();
+
+        // Material combinado (Sólido + Wireframe)
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xff6600, 
+            roughness: 0.4,
+            metalness: 0.8,
+            side: THREE.DoubleSide
+        });
+        
+        mesh = new THREE.Mesh(geo, material);
+        
+        // Centrar la malla en el origen para que la rotación sea natural
+        // En CNC el origen (0,0) suele ser una esquina, desplazamos la malla para visualización
+        mesh.position.set(mmX/2, -mmY/2, 0); 
+        
+        helperGroup.add(mesh);
+
+        // Ajustar cámara para que encuadre el objeto
+        const maxDim = Math.max(mmX, mmY);
+        camera.position.set(mmX/2, -mmY/2 - (maxDim*0.5), maxDim * 1.2);
+        controls.target.set(mmX/2, -mmY/2, -zM/2);
+    }
+
+    // Generador de G-Code optimizado
+    function crearGCode(data, w, h, ratio) {
+        const mmX = parseFloat(document.getElementById('anchoX').value);
+        const mmY = mmX * ratio;
+        const totalZ = parseFloat(document.getElementById('proZ').value);
+        const stepZ = parseFloat(document.getElementById('stepZ').value);
+        const fRate = document.getElementById('feedRate').value;
+        const sSpeed = document.getElementById('spindleSpeed').value;
+        
+        let g = `(WARES CNC PRO - MECANIZADO 3D)\n`;
+        g += `(Dimensiones: X=${mmX.toFixed(2)}mm, Y=${mmY.toFixed(2)}mm, Profundidad=${totalZ}mm)\n`;
+        g += `G21 (Milimetros)\n`;
+        g += `G90 (Coordenadas Absolutas)\n`;
+        g += `G64 (Modo de Velocidad Constante)\n`;
+        g += `M3 S${sSpeed} (Encender Huso)\n`;
+        g += `G0 Z5.000 (Subir a Z de seguridad)\n\n`;
+        
+        // Ciclo de pasadas de profundidad
+        for(let cZ = stepZ; cZ <= totalZ + 0.01; cZ += stepZ) {
+            let lim = Math.min(cZ, totalZ);
+            g += `(--- PASADA Z = -${lim.toFixed(3)} ---)\n`;
+            
+            // Estrategia Zig-Zag para ahorrar tiempo en vaciados
+            for(let y = 0; y < h; y++) {
+                // Determinar dirección (0=Izq a Der, 1=Der a Izq)
+                const isEven = (y % 2 === 0);
+                const startX = isEven ? 0 : w - 1;
+                const endX   = isEven ? w : -1;
+                const stepX  = isEven ? 1 : -1;
+
+                // Mover a Y y X inicial de la línea en rápido si es el inicio de la pasada
+                if(y === 0) {
+                     g += `G0 X0.00 Y0.00\n`;
+                }
+
+                for(let x = startX; x !== endX; x += stepX) {
+                    let i = (y * w + x) * 4;
+                    let b = (data[i] + data[i+1] + data[i+2]) / 3;
+                    
+                    // Calcular Z final del pixel. Limitado por la profundidad de pasada actual 'lim'
+                    let targetZ = -((255 - b) / 255 * totalZ);
+                    let zV = Math.max(targetZ, -lim).toFixed(3);
+                    
+                    let posX = (x * mmX / (w - 1)).toFixed(3);
+                    // Y es negativo porque en la pantalla Y crece hacia abajo, 
+                    // en CNC tradicional Y+ es hacia el fondo, pero mapear imágenes suele implicar Y negativo.
+                    let posY = (-(y * mmY / (h - 1))).toFixed(3); 
+                    
+                    g += `G1 X${posX} Y${posY} Z${zV} F${fRate}\n`;
+                }
+            }
+        }
+        
+        g += `\n(FIN DEL PROGRAMA)\n`;
+        g += `G0 Z10.000\n`;
+        g += `G0 X0.00 Y0.00\n`;
+        g += `M5 (Apagar Huso)\n`;
+        g += `M30 (Fin del programa y rebobinar)\n`;
+        
+        // Descargar Archivo
+        const blob = new Blob([g], {type: 'text/plain'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "WARES_CNC_PROGRAMA.nc"; // Extension típica CNC (.nc, .tap o .txt)
+        document.body.appendChild(a); 
+        a.click(); 
+        document.body.removeChild(a);
+        
+        showToast("✅ Archivo G-Code generado y descargado");
+    }
+
+    // Iniciar 3D al cargar
+    window.onload = init3D;
+
+</script>
+</body>
+  </html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WARES CNC PRO - Panel de Control</title>
+    
+    <!-- Tailwind CSS para estilos modernos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wares: {
+                            accent: '#ff6600',
+                            hover: '#ff8533',
+                            bg: '#0a0a0a',
+                            panel: '#121212',
+                            border: '#333333'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Three.js y OrbitControls para visualización 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        /* Estilos personalizados adicionales */
+        input[type="number"], input[type="file"] {
+            color-scheme: dark;
+        }
+        
+        /* Custom scrollbar para el sidebar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff6600; }
+
+        .toast-enter { transform: translateY(100%); opacity: 0; }
+        .toast-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
+    </style>
+</head>
+<body class="bg-wares-bg text-gray-200 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-wares-panel border-b border-wares-accent p-4 text-center z-20 shadow-md flex justify-between items-center px-6">
+        <h1 class="text-2xl font-black text-wares-accent tracking-widest m-0">WARES CNC <span class="text-white">PRO</span></h1>
+        <div class="text-xs text-gray-400 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Sistema Listo
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="flex flex-1 overflow-hidden flex-col md:flex-row">
+        
+        <!-- Sidebar Controls -->
+        <aside class="w-full md:w-80 bg-wares-panel border-r border-wares-border p-6 overflow-y-auto flex-shrink-0 z-10 shadow-2xl">
+            
+            <div class="space-y-6">
+                <!-- Sección 1: Imagen -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">1. Cargar Foto / Logo</label>
+                    <div class="relative group">
+                        <div class="absolute inset-0 bg-wares-accent/10 rounded border-2 border-dashed border-wares-accent/50 group-hover:border-wares-accent transition-colors"></div>
+                        <input type="file" id="foto" accept="image/*" class="relative z-10 w-full p-4 opacity-0 cursor-pointer h-full" onchange="previewImage(event)">
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-wares-accent text-sm font-medium">
+                            <span id="file-name">Haz clic o arrastra una imagen</span>
+                        </div>
+                    </div>
+                    <div id="image-preview-container" class="hidden mt-2 rounded border border-wares-border overflow-hidden bg-black flex justify-center p-2">
+                        <img id="image-preview" class="max-h-32 object-contain mix-blend-screen" />
+                    </div>
+                </div>
+
+                <!-- Sección 2: Parámetros Dimensionales -->
+                <div class="space-y-4 pt-4 border-t border-wares-border">
+                    <h3 class="text-sm font-bold text-white uppercase">Dimensiones (mm)</h3>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Ancho Total (X)</label>
+                        <div class="flex items-center">
+                            <input type="number" id="anchoX" value="100" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                            <span class="ml-2 text-xs text-gray-500 font-bold">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Profundidad (Z)</label>
+                            <input type="number" id="proZ" value="2" step="0.1" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Paso Z (mm)</label>
+                            <input type="number" id="stepZ" value="1" step="0.1" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 3: Parámetros de Máquina -->
+                <div class="space-y-4 pt-4 border-t border-wares-border">
+                    <h3 class="text-sm font-bold text-white uppercase">Máquina / Avances</h3>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Avance (F)</label>
+                            <input type="number" id="feedRate" value="1000" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Huso (S)</label>
+                            <input type="number" id="spindleSpeed" value="15000" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Resolución Malla</label>
+                        <select id="resolution" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                            <option value="60">Rápida (60px)</option>
+                            <option value="120" selected>Media (120px)</option>
+                            <option value="200">Alta (200px - Lento)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="pt-6">
+                    <button onclick="procesar()" class="w-full py-4 bg-wares-accent hover:bg-wares-hover text-black text-sm font-black tracking-widest rounded shadow-[0_0_15px_rgba(255,102,0,0.3)] transition-all transform active:scale-95 uppercase">
+                        Generar Mach3 G-Code
+                    </button>
+                    <p class="text-[10px] text-gray-500 mt-4 text-center tracking-wider">MECANIZADO 3D OPTIMIZADO - ZIGZAG</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 3D Viewer -->
+        <main id="viewer-container" class="flex-1 relative bg-black cursor-move">
+            <!-- Canvas se inyecta aquí -->
+            <div id="viewer-overlay" class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                <div class="text-wares-border text-2xl font-black tracking-widest uppercase opacity-30 select-none">
+                    Previsualización 3D
+                </div>
+            </div>
+            
+            <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur text-xs p-2 rounded border border-wares-border text-gray-400 select-none pointer-events-none">
+                <span class="text-wares-accent">Click izq:</span> Rotar | <span class="text-wares-accent">Click der:</span> Mover | <span class="text-wares-accent">Rueda:</span> Zoom
+            </div>
+        </main>
+    </div>
+
+    <!-- Sistema de Notificaciones (Toast) -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white px-6 py-3 rounded-full shadow-2xl border border-neutral-700 flex items-center gap-3 toast-enter z-50 pointer-events-none">
+        <svg class="w-5 h-5 text-wares-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span id="toast-message" class="text-sm font-medium">Notificación</span>
+    </div>
+
+<script>
+    // Variables globales Three.js
+    let scene, camera, renderer, mesh, controls, helperGroup;
+
+    // Inicialización de la vista 3D
+    function init3D() {
+        const container = document.getElementById('viewer-container');
+        
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color('#050505');
+        
+        // Grupo para rotar fácilmente
+        helperGroup = new THREE.Group();
+        scene.add(helperGroup);
+
+        // Cámara
+        camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 2000);
+        camera.position.set(0, -100, 100);
+
+        // Renderizador
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Controles de cámara
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1; // No dejar ver mucho por debajo
+        
+        // Luces
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+        
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(50, 50, 100);
+        scene.add(dirLight);
+
+        // Grid (Plano de trabajo)
+        const grid = new THREE.GridHelper(200, 20, 0x444444, 0x222222);
+        grid.rotation.x = Math.PI / 2; // Alinear con XY (Máquina CNC tradicional)
+        scene.add(grid);
+
+        // Ejes
+        const axesHelper = new THREE.AxesHelper( 50 );
+        scene.add( axesHelper );
+
+        // Loop de renderizado
+        animate();
+    }
+
+    function animate() { 
+        requestAnimationFrame(animate); 
+        controls.update(); // Necesario para damping
+        renderer.render(scene, camera); 
+    }
+
+    // Adaptación a cambios de tamaño de ventana
+    window.addEventListener('resize', () => {
+        const container = document.getElementById('viewer-container');
+        if(!container) return;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    // Utilidad de notificaciones
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').textContent = msg;
+        toast.classList.add('toast-active');
+        toast.classList.remove('toast-enter');
+        
+        setTimeout(() => {
+            toast.classList.remove('toast-active');
+            toast.classList.add('toast-enter');
+        }, 3000);
+    }
+
+    // Previsualizar la imagen cargada
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+        
+        document.getElementById('file-name').textContent = file.name;
+        document.getElementById('file-name').classList.replace('text-wares-accent', 'text-green-500');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('image-preview');
+            preview.src = e.target.result;
+            document.getElementById('image-preview-container').classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+
+    // Función principal de procesamiento
+    function procesar() {
+        const file = document.getElementById('foto').files[0];
+        if (!file) return showToast("⚠️ Por favor, sube una foto primero.");
+        
+        showToast("Procesando imagen y generando trayectoria...");
+        document.getElementById('viewer-overlay').style.display = 'none';
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Resolución de procesamiento basada en el selector
+                const resW = parseInt(document.getElementById('resolution').value);
+                canvas.width = resW; 
+                canvas.height = Math.round((img.height/img.width) * resW);
+                
+                // Dibujar en canvas para extraer pixeles
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                
+                crear3D(data, canvas.width, canvas.height);
+                crearGCode(data, canvas.width, canvas.height, img.height/img.width);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Generar representación 3D de la trayectoria
+    function crear3D(data, w, h) {
+        if(mesh) helperGroup.remove(mesh);
+        
+        const mmX = parseFloat(document.getElementById('anchoX').value);
+        const mmY = mmX * (h/w);
+        const zM = parseFloat(document.getElementById('proZ').value);
+        
+        // Geometría plana con las dimensiones físicas a escala
+        const geo = new THREE.PlaneGeometry(mmX, mmY, w-1, h-1);
+        
+        // Modificar los vértices Z basados en el color (0 negro -> fondo total, 255 blanco -> Z0)
+        for(let i=0; i < geo.attributes.position.count; i++) {
+            // Promedio RGB para escala de grises
+            const b = (data[i*4] + data[i*4+1] + data[i*4+2]) / 3;
+            // Profundidad: blanco (255) = 0, negro (0) = -zM
+            const depth = -((255 - b) / 255) * zM;
+            geo.attributes.position.setZ(i, depth);
+        }
+        
+        geo.computeVertexNormals();
+
+        // Material combinado (Sólido + Wireframe)
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xff6600, 
+            roughness: 0.4,
+            metalness: 0.8,
+            side: THREE.DoubleSide
+        });
+        
+        mesh = new THREE.Mesh(geo, material);
+        
+        // Centrar la malla en el origen para que la rotación sea natural
+        // En CNC el origen (0,0) suele ser una esquina, desplazamos la malla para visualización
+        mesh.position.set(mmX/2, -mmY/2, 0); 
+        
+        helperGroup.add(mesh);
+
+        // Ajustar cámara para que encuadre el objeto
+        const maxDim = Math.max(mmX, mmY);
+        camera.position.set(mmX/2, -mmY/2 - (maxDim*0.5), maxDim * 1.2);
+        controls.target.set(mmX/2, -mmY/2, -zM/2);
+    }
+
+    // Generador de G-Code optimizado
+    function crearGCode(data, w, h, ratio) {
+        const mmX = parseFloat(document.getElementById('anchoX').value);
+        const mmY = mmX * ratio;
+        const totalZ = parseFloat(document.getElementById('proZ').value);
+        const stepZ = parseFloat(document.getElementById('stepZ').value);
+        const fRate = document.getElementById('feedRate').value;
+        const sSpeed = document.getElementById('spindleSpeed').value;
+        
+        let g = `(WARES CNC PRO - MECANIZADO 3D)\n`;
+        g += `(Dimensiones: X=${mmX.toFixed(2)}mm, Y=${mmY.toFixed(2)}mm, Profundidad=${totalZ}mm)\n`;
+        g += `G21 (Milimetros)\n`;
+        g += `G90 (Coordenadas Absolutas)\n`;
+        g += `G64 (Modo de Velocidad Constante)\n`;
+        g += `M3 S${sSpeed} (Encender Huso)\n`;
+        g += `G0 Z5.000 (Subir a Z de seguridad)\n\n`;
+        
+        // Ciclo de pasadas de profundidad
+        for(let cZ = stepZ; cZ <= totalZ + 0.01; cZ += stepZ) {
+            let lim = Math.min(cZ, totalZ);
+            g += `(--- PASADA Z = -${lim.toFixed(3)} ---)\n`;
+            
+            // Estrategia Zig-Zag para ahorrar tiempo en vaciados
+            for(let y = 0; y < h; y++) {
+                // Determinar dirección (0=Izq a Der, 1=Der a Izq)
+                const isEven = (y % 2 === 0);
+                const startX = isEven ? 0 : w - 1;
+                const endX   = isEven ? w : -1;
+                const stepX  = isEven ? 1 : -1;
+
+                // Mover a Y y X inicial de la línea en rápido si es el inicio de la pasada
+                if(y === 0) {
+                     g += `G0 X0.00 Y0.00\n`;
+                }
+
+                for(let x = startX; x !== endX; x += stepX) {
+                    let i = (y * w + x) * 4;
+                    let b = (data[i] + data[i+1] + data[i+2]) / 3;
+                    
+                    // Calcular Z final del pixel. Limitado por la profundidad de pasada actual 'lim'
+                    let targetZ = -((255 - b) / 255 * totalZ);
+                    let zV = Math.max(targetZ, -lim).toFixed(3);
+                    
+                    let posX = (x * mmX / (w - 1)).toFixed(3);
+                    // Y es negativo porque en la pantalla Y crece hacia abajo, 
+                    // en CNC tradicional Y+ es hacia el fondo, pero mapear imágenes suele implicar Y negativo.
+                    let posY = (-(y * mmY / (h - 1))).toFixed(3); 
+                    
+                    g += `G1 X${posX} Y${posY} Z${zV} F${fRate}\n`;
+                }
+            }
+        }
+        
+        g += `\n(FIN DEL PROGRAMA)\n`;
+        g += `G0 Z10.000\n`;
+        g += `G0 X0.00 Y0.00\n`;
+        g += `M5 (Apagar Huso)\n`;
+        g += `M30 (Fin del programa y rebobinar)\n`;
+        
+        // Descargar Archivo
+        const blob = new Blob([g], {type: 'text/plain'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "WARES_CNC_PROGRAMA.nc"; // Extension típica CNC (.nc, .tap o .txt)
+        document.body.appendChild(a); 
+        a.click(); 
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WARES CNC PRO - Panel de Control</title>
+    
+    <!-- Tailwind CSS para estilos modernos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wares: {
+                            accent: '#ff6600',
+                            hover: '#ff8533',
+                            bg: '#0a0a0a',
+                            panel: '#121212',
+                            border: '#333333'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Three.js y OrbitControls para visualización 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        /* Estilos personalizados adicionales */
+        input[type="number"], input[type="file"] {
+            color-scheme: dark;
+        }
+        
+        /* Custom scrollbar para el sidebar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff6600; }
+
+        .toast-enter { transform: translateY(100%); opacity: 0; }
+        .toast-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
+    </style>
+</head>
+<body class="bg-wares-bg text-gray-200 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-wares-panel border-b border-wares-accent p-4 text-center z-20 shadow-md flex justify-between items-center px-6">
+        <h1 class="text-2xl font-black text-wares-accent tracking-widest m-0">WARES CNC <span class="text-white">PRO</span></h1>
+        <div class="text-xs text-gray-400 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Sistema Listo
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="flex flex-1 overflow-hidden flex-col md:flex-row">
+        
+        <!-- Sidebar Controls -->
+        <aside class="w-full md:w-80 bg-wares-panel border-r border-wares-border p-6 overflow-y-auto flex-shrink-0 z-10 shadow-2xl">
+            
+            <div class="space-y-6">
+                <!-- Sección 1: Imagen -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">1. Cargar Foto / Logo</label>
+                    <div class="relative group">
+                        <div class="absolute inset-0 bg-wares-accent/10 rounded border-2 border-dashed border-wares-accent/50 group-hover:border-wares-accent transition-colors"></div>
+                        <input type="file" id="foto" accept="image/*" class="relative z-10 w-full p-4 opacity-0 cursor-pointer h-full" onchange="previewImage(event)">
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-wares-accent text-sm font-medium">
+                            <span id="file-name">Haz clic o arrastra una imagen</span>
+                        </div>
+                    </div>
+                    <div id="image-preview-container" class="hidden mt-2 rounded border border-wares-border overflow-hidden bg-black flex justify-center p-2">
+                        <img id="image-preview" class="max-h-32 object-contain mix-blend-screen" />
+                    </div>
+                </div>
+
+                <!-- Sección 2: Parámetros Dimensionales -->
+                <div class="space-y-4 pt-4 border-t border-wares-border">
+                    <h3 class="text-sm font-bold text-white uppercase">Dimensiones (mm)</h3>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Ancho Total (X)</label>
+                        <div class="flex items-center">
+                            <input type="number" id="anchoX" value="100" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                            <span class="ml-2 text-xs text-gray-500 font-bold">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Profundidad (Z)</label>
+                            <input type="number" id="proZ" value="2" step="0.1" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Paso Z (mm)</label>
+                            <input type="number" id="stepZ" value="1" step="0.1" class="w-full p-2.5 bg-black border border-wares-border text-wares-accent font-bold rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 3: Parámetros de Máquina -->
+                <div class="space-y-4 pt-4 border-t border-wares-border">
+                    <h3 class="text-sm font-bold text-white uppercase">Máquina / Avances</h3>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Avance (F)</label>
+                            <input type="number" id="feedRate" value="1000" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Huso (S)</label>
+                            <input type="number" id="spindleSpeed" value="15000" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Resolución Malla</label>
+                        <select id="resolution" class="w-full p-2 bg-black border border-wares-border text-white rounded focus:border-wares-accent focus:outline-none transition-colors">
+                            <option value="60">Rápida (60px)</option>
+                            <option value="120" selected>Media (120px)</option>
+                            <option value="200">Alta (200px - Lento)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="pt-6">
+                    <button onclick="procesar()" class="w-full py-4 bg-wares-accent hover:bg-wares-hover text-black text-sm font-black tracking-widest rounded shadow-[0_0_15px_rgba(255,102,0,0.3)] transition-all transform active:scale-95 uppercase">
+                        Generar Mach3 G-Code
+                    </button>
+                    <p class="text-[10px] text-gray-500 mt-4 text-center tracking-wider">MECANIZADO 3D OPTIMIZADO - ZIGZAG</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 3D Viewer -->
+        <main id="viewer-container" class="flex-1 relative bg-black cursor-move">
+            <!-- Canvas se inyecta aquí -->
+            <div id="viewer-overlay" class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                <div class="text-wares-border text-2xl font-black tracking-widest uppercase opacity-30 select-none">
+                    Previsualización 3D
+                </div>
+            </div>
+            
+            <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur text-xs p-2 rounded border border-wares-border text-gray-400 select-none pointer-events-none">
+                <span class="text-wares-accent">Click izq:</span> Rotar | <span class="text-wares-accent">Click der:</span> Mover | <span class="text-wares-accent">Rueda:</span> Zoom
+            </div>
+        </main>
+    </div>
+
+    <!-- Sistema de Notificaciones (Toast) -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white px-6 py-3 rounded-full shadow-2xl border border-neutral-700 flex items-center gap-3 toast-enter z-50 pointer-events-none">
+        <svg class="w-5 h-5 text-wares-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span id="toast-message" class="text-sm font-medium">Notificación</span>
+    </div>
+
+<script>
+    // Variables globales Three.js
+    let scene, camera, renderer, mesh, controls, helperGroup;
+
+    // Inicialización de la vista 3D
+    function init3D() {
+        const container = document.getElementById('viewer-container');
+        
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color('#050505');
+        
+        // Grupo para rotar fácilmente
+        helperGroup = new THREE.Group();
+        scene.add(helperGroup);
+
+        // Cámara
+        camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 2000);
+        camera.position.set(0, -100, 100);
+
+        // Renderizador
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Controles de cámara
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1; // No dejar ver mucho por debajo
+        
+        // Luces
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+        
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(50, 50, 100);
+        scene.add(dirLight);
+
+        // Grid (Plano de trabajo)
+        const grid = new THREE.GridHelper(200, 20, 0x444444, 0x222222);
+        grid.rotation.x = Math.PI / 2; // Alinear con XY (Máquina CNC tradicional)
+        scene.add(grid);
+
+        // Ejes
+        const axesHelper = new THREE.AxesHelper( 50 );
+        scene.add( axesHelper );
+
+        // Loop de renderizado
+        animate();
+    }
+
+    function animate() { 
+        requestAnimationFrame(animate); 
+        controls.update(); // Necesario para damping
+        renderer.render(scene, camera); 
+    }
+
+    // Adaptación a cambios de tamaño de ventana
+    window.addEventListener('resize', () => {
+        const container = document.getElementById('viewer-container');
+        if(!container) return;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    // Utilidad de notificaciones
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').textContent = msg;
+        toast.classList.add('toast-active');
+        toast.classList.remove('toast-enter');
+        
+        setTimeout(() => {
+            toast.classList.remove('toast-active');
+            toast.classList.add('toast-enter');
+        }, 3000);
+    }
+
+    // Previsualizar la imagen cargada
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+        
+        document.getElementById('file-name').textContent = file.name;
+        document.getElementById('file-name').classList.replace('text-wares-accent', 'text-green-500');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('image-preview');
+            preview.src = e.target.result;
+            document.getElementById('image-preview-container').classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+
+    // Función principal de procesamiento
+    function procesar() {
+        const file = document.getElementById('foto').files[0];
+        if (!file) return showToast("⚠️ Por favor, sube una foto primero.");
+        
+        showToast("Procesando imagen y generando trayectoria...");
+        document.getElementById('viewer-overlay').style.display = 'none';
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Resolución de procesamiento basada en el selector
+                const resW = parseInt(document.getElementById('resolution').value);
+                canvas.width = resW; 
+                canvas.height = Math.round((img.height/img.width) * resW);
+                
+                // Dibujar en canvas para extraer pixeles
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                
+                crear3D(data, canvas.width, canvas.height);
+                crearGCode(data, canvas.width, canvas.height, img.height/img.width);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Generar representación 3D de la trayectoria
+    function crear3D(data, w, h) {
+        if(mesh) helperGroup.remove(mesh);
+        
+        const mmX = parseFloat(document.getElementById('anchoX').value);
+        const mmY = mmX * (h/w);
+        const zM = parseFloat(document.getElementById('proZ').value);
+        
+        // Geometría plana con las dimensiones físicas a escala
+        const geo = new THREE.PlaneGeometry(mmX, mmY, w-1, h-1);
+        
+        // Modificar los vértices Z basados en el color (0 negro -> fondo total, 255 blanco -> Z0)
+        for(let i=0; i < geo.attributes.position.count; i++) {
+            // Promedio RGB para escala de grises
+            const b = (data[i*4] + data[i*4+1] + data[i*4+2]) / 3;
+            // Profundidad: blanco (255) = 0, negro (0) = -zM
+            const depth = -((255 - b) / 255) * zM;
+            geo.attributes.position.setZ(i, depth);
+        }
+        
+        geo.computeVertexNormals();
+
+        // Material combinado (Sólido + Wireframe)
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xff6600, 
+            roughness: 0.4,
+            metalness: 0.8,
+            side: THREE.DoubleSide
+        });
+        
+        mesh = new THREE.Mesh(geo, material);
+        
+        // Centrar la malla en el origen para que la rotación sea natural
+        // En CNC el origen (0,0) suele ser una esquina, desplazamos la malla para visualización
+        mesh.position.set(mmX/2, -mmY/2, 0); 
+        
+        helperGroup.add(mesh);
+
+        // Ajustar cámara para que encuadre el objeto
+        const maxDim = Math.max(mmX, mmY);
+        camera.position.set(mmX/2, -mmY/2 - (maxDim*0.5), maxDim * 1.2);
+        controls.target.set(mmX/2, -mmY/2, -zM/2);
+    }
+
+    // Generador de G-Code optimizado
+    function crearGCode(data, w, h, ratio) {
+        const mmX = parseFloat(document.getElementById('anchoX').value);
+        const mmY = mmX * ratio;
+        const totalZ = parseFloat(document.getElementById('proZ').value);
+        const stepZ = parseFloat(document.getElementById('stepZ').value);
+        const fRate = document.getElementById('feedRate').value;
+        const sSpeed = document.getElementById('spindleSpeed').value;
+        
+        let g = `(WARES CNC PRO - MECANIZADO 3D)\n`;
+        g += `(Dimensiones: X=${mmX.toFixed(2)}mm, Y=${mmY.toFixed(2)}mm, Profundidad=${totalZ}mm)\n`;
+        g += `G21 (Milimetros)\n`;
+        g += `G90 (Coordenadas Absolutas)\n`;
+        g += `G64 (Modo de Velocidad Constante)\n`;
+        g += `M3 S${sSpeed} (Encender Huso)\n`;
+        g += `G0 Z5.000 (Subir a Z de seguridad)\n\n`;
+        
+        // Ciclo de pasadas de profundidad
+        for(let cZ = stepZ; cZ <= totalZ + 0.01; cZ += stepZ) {
+            let lim = Math.min(cZ, totalZ);
+            g += `(--- PASADA Z = -${lim.toFixed(3)} ---)\n`;
+            
+            // Estrategia Zig-Zag para ahorrar tiempo en vaciados
+            for(let y = 0; y < h; y++) {
+                // Determinar dirección (0=Izq a Der, 1=Der a Izq)
+                const isEven = (y % 2 === 0);
+                const startX = isEven ? 0 : w - 1;
+                const endX   = isEven ? w : -1;
+                const stepX  = isEven ? 1 : -1;
+
+                // Mover a Y y X inicial de la línea en rápido si es el inicio de la pasada
+                if(y === 0) {
+                     g += `G0 X0.00 Y0.00\n`;
+                }
+
+                for(let x = startX; x !== endX; x += stepX) {
+                    let i = (y * w + x) * 4;
+                    let b = (data[i] + data[i+1] + data[i+2]) / 3;
+                    
+                    // Calcular Z final del pixel. Limitado por la profundidad de pasada actual 'lim'
+                    let targetZ = -((255 - b) / 255 * totalZ);
+                    let zV = Math.max(targetZ, -lim).toFixed(3);
+                    
+                    let posX = (x * mmX / (w - 1)).toFixed(3);
+                    // Y es negativo porque en la pantalla Y crece hacia abajo, 
+                    // en CNC tradicional Y+ es hacia el fondo, pero mapear imágenes suele implicar Y negativo.
+                    let posY = (-(y * mmY / (h - 1))).toFixed(3); 
+                    
+                    g += `G1 X${posX} Y${posY} Z${zV} F${fRate}\n`;
+                }
+            }
+        }
+        
+        g += `\n(FIN DEL PROGRAMA)\n`;
+        g += `G0 Z10.000\n`;
+        g += `G0 X0.00 Y0.00\n`;
+        g += `M5 (Apagar Huso)\n`;
+        g += `M30 (Fin del programa y rebobinar)\n`;
+        
+        // Descargar Archivo
+        const blob = new Blob([g], {type: 'text/plain'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "WARES_CNC_PROGRAMA.nc"; // Extension típica CNC (.nc, .tap o .txt)
+        document.body.appendChild(a); 
+        a.click(); 
+        document.body.removeChild(a);
+        
+        showToast("✅ Archivo G-Code generado y descargado");
+    }
+
+    // Iniciar 3D al cargar
+    window.onload = init3D;
+
+</script>
+</body>
+  </html>      document.body.removeChild(a);
+        
+        showToast("✅ Archivo G-Code generado y descargado");
+    }
+
+    // Iniciar 3D al cargar
+    window.onload = init3D;
+
+</script>
+</body>
+  </html>
+        #viewer { width:100%; height:300px; }
+        .panel { padding:15px; }
