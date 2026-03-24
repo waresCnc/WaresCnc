@@ -1,95 +1,130 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>WARES CNC - Generador 3D Pro</title>
-    <script src="https://cdnjs.cloudflare.com"></script>
-    <style>
-        :root { --wares-orange: #ff6600; --bg: #0a0a0a; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
-        #panel { width: 320px; padding: 20px; background: #151515; border-right: 3px solid var(--wares-orange); overflow-y: auto; z-index: 10; }
-        .header { text-align: center; margin-bottom: 20px; }
-        h1 { font-size: 20px; color: var(--wares-orange); text-transform: uppercase; margin: 0; }
-        .control-group { background: #222; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
-        label { display: block; font-size: 10px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; }
-        input { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #000; color: var(--wares-orange); box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: var(--wares-orange); border: none; color: black; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 15px; text-transform: uppercase; }
-        #viewer { flex-grow: 1; background: #000; }
-    </style>
-</head>
-<body>
-<div id="panel">
-    <div class="header"><h1>WARES CNC</h1></div>
-    <div class="control-group"><label>Imagen</label><input type="file" id="upload" accept="image/*"></div>
-    <div class="control-group">
-        <label>Ancho X / Largo Y (mm)</label>
-        <div style="display: flex; gap: 5px;"><input type="number" id="widthX" value="100"><input type="number" id="lengthY" value="100"></div>
-        <label style="margin-top:10px">Z Total (mm)</label><input type="number" id="depthZ" value="3">
-        <label style="margin-top:10px">Z por Pasada (mm)</label><input type="number" id="stepZ" value="1">
-    </div>
-    <button onclick="processImage()">GENERAR G-CODE MACH3</button>
-</div>
-<div id="viewer"></div>
-<script>
-let scene, camera, renderer, mesh, frameId;
-function init3D() {
-    scene = new THREE.Scene();
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth - 320, window.innerHeight);
-    document.getElementById('viewer').appendChild(renderer.domElement);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-}
-function processImage() {
-    const file = document.getElementById('upload').files[0];
-    if (!file) return alert("Sube una foto");
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 60; canvas.height = Math.round((img.height / img.width) * 60);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        render3D(data, canvas.width, canvas.height);
-        generateG(data, canvas.width, canvas.height);
-    };
-}
-function render3D(data, w, h) {
-    if (mesh) scene.remove(mesh);
-    const geometry = new THREE.PlaneGeometry(w, h, w - 1, h - 1);
-    const zScale = parseFloat(document.getElementById('depthZ').value);
-    for (let i = 0; i < geometry.attributes.position.count; i++) {
-        const b = (data[i*4] + data[i*4+1] + data[i*4+2]) / 3;
-        geometry.attributes.position.setZ(i, (b / 255) * zScale * 2);
-    }
-    mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: 0xff6600, wireframe: true }));
-    scene.add(mesh);
-    camera = new THREE.PerspectiveCamera(45, (window.innerWidth-320)/window.innerHeight, 1, 1000);
-    camera.position.set(0, -h, w); camera.lookAt(0,0,0);
-    const anim = () => { frameId = requestAnimationFrame(anim); mesh.rotation.z += 0.005; renderer.render(scene, camera); };
-    anim();
-}
-function generateG(data, w, h) {
-    const mmX = document.getElementById('widthX').value, mmY = document.getElementById('lengthY').value;
-    const totalZ = parseFloat(document.getElementById('depthZ').value), stepZ = parseFloat(document.getElementById('stepZ').value);
-    let g = "G21\nG90\nG64\nM3 S15000\n";
-    for (let cZ = stepZ; cZ <= totalZ + 0.01; cZ += stepZ) {
-        let lim = Math.min(cZ, totalZ);
-        for (let y = 0; y < h; y++) {
-            for (let x = 0; x < w; x++) {
-                let i = (y * w + x) * 4;
-                let b = (data[i] + data[i+1] + data[i+2]) / 3;
-                let zV = Math.max(-((255-b)/255*totalZ), -lim).toFixed(3);
-                g += `G1 X${(x*mmX/w).toFixed(2)} Y${(-(y*mmY/h)).toFixed(2)} Z${zV} F1000\n`;
-            }
-        }
-    }
-    g += "G0 Z10\nM30";
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([g], {type: 'text/plain'}));
-    a.download = "WARES_CNC.txt"; a.click();
-}
-init3D();
-</script>
-</body>
-</html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Essay Generator</title></head><body><p>&lt;!DOCTYPE html&gt;</p>
+<p>&lt;html lang="es"&gt;</p>
+<p>&lt;head&gt;</p>
+<p>&nbsp; &nbsp; &lt;meta charset="UTF-8"&gt;</p>
+<p>&nbsp; &nbsp; &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p>&nbsp; &nbsp; &lt;title&gt;WARES CNC - Panel de Control&lt;/title&gt;</p>
+<p>&nbsp; &nbsp; &lt;script src="https://cdnjs.cloudflare.com"&gt;&lt;/script&gt;</p>
+<p>&nbsp; &nbsp; &lt;style&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; :root { --accent: #ff6600; --bg: #0a0a0a; --panel: #1a1a1a; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: white; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; #header { background: var(--panel); padding: 15px; border-bottom: 2px solid var(--accent); text-align: center; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; #header h1 { margin: 0; font-size: 24px; color: var(--accent); letter-spacing: 2px; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; #main { display: flex; flex-grow: 1; overflow: hidden; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; #sidebar { width: 320px; background: #111; padding: 20px; border-right: 1px solid #333; overflow-y: auto; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; #viewer { flex-grow: 1; background: #000; position: relative; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; .input-group { margin-bottom: 15px; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; label { display: block; font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 5px; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; input { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: var(--accent); border-radius: 4px; box-sizing: border-box; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; button { width: 100%; padding: 15px; background: var(--accent); border: none; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; button:active { background: white; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; canvas { width: 100% !important; height: 100% !important; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; @media (max-width: 768px) { #main { flex-direction: column; } #sidebar { width: 100%; height: auto; } #viewer { height: 300px; } }</p>
+<p>&nbsp; &nbsp; &lt;/style&gt;</p>
+<p>&lt;/head&gt;</p>
+<p>&lt;body&gt;</p>
+<p>&nbsp;</p>
+<p>&lt;div id="header"&gt;&lt;h1&gt;WARES CNC PRO&lt;/h1&gt;&lt;/div&gt;</p>
+<p>&nbsp;</p>
+<p>&lt;div id="main"&gt;</p>
+<p>&nbsp; &nbsp; &lt;div id="sidebar"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="input-group"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label&gt;1. Cargar Foto / Logo&lt;/label&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="file" id="foto" accept="image/*"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="input-group"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label&gt;Ancho X (mm)&lt;/label&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="number" id="anchoX" value="100"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="input-group"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label&gt;Z Total (Profundidad mm)&lt;/label&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="number" id="proZ" value="2" step="0.1"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="input-group"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;label&gt;Z por Pasada (mm)&lt;/label&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;input type="number" id="stepZ" value="1" step="0.1"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;button onclick="procesar()"&gt;GENERAR PARA MACH3&lt;/button&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;p style="font-size: 10px; color: #555; margin-top: 20px; text-align: center;"&gt;MECANIZADO 3D OPTIMIZADO&lt;/p&gt;</p>
+<p>&nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &lt;div id="viewer"&gt;&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&nbsp;</p>
+<p>&lt;script&gt;</p>
+<p>let scene, camera, renderer, mesh;</p>
+<p>function init3D() {</p>
+<p>&nbsp; &nbsp; scene = new THREE.Scene();</p>
+<p>&nbsp; &nbsp; camera = new THREE.PerspectiveCamera(75, (window.innerWidth-320)/window.innerHeight, 0.1, 1000);</p>
+<p>&nbsp; &nbsp; renderer = new THREE.WebGLRenderer({ antialias: true });</p>
+<p>&nbsp; &nbsp; document.getElementById('viewer').appendChild(renderer.domElement);</p>
+<p>&nbsp; &nbsp; scene.add(new THREE.AmbientLight(0xffffff, 1));</p>
+<p>&nbsp; &nbsp; camera.position.z = 50;</p>
+<p>&nbsp; &nbsp; animate();</p>
+<p>}</p>
+<p>function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); if(mesh) mesh.rotation.z += 0.005; }</p>
+<p>&nbsp;</p>
+<p>function procesar() {</p>
+<p>&nbsp; &nbsp; const file = document.getElementById('foto').files[0];</p>
+<p>&nbsp; &nbsp; if (!file) return alert("Sube una foto");</p>
+<p>&nbsp; &nbsp; const reader = new FileReader();</p>
+<p>&nbsp; &nbsp; reader.onload = function(e) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; const img = new Image();</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; img.src = e.target.result;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; img.onload = function() {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const canvas = document.createElement('canvas');</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const ctx = canvas.getContext('2d');</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; canvas.width = 60; canvas.height = Math.round((img.height/img.width)*60);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ctx.drawImage(img, 0, 0, canvas.width, canvas.height);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; crear3D(data, canvas.width, canvas.height);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; crearGCode(data, canvas.width, canvas.height, img.height/img.width);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
+<p>&nbsp; &nbsp; };</p>
+<p>&nbsp; &nbsp; reader.readAsDataURL(file);</p>
+<p>}</p>
+<p>&nbsp;</p>
+<p>function crear3D(data, w, h) {</p>
+<p>&nbsp; &nbsp; if(mesh) scene.remove(mesh);</p>
+<p>&nbsp; &nbsp; const geo = new THREE.PlaneGeometry(w, h, w-1, h-1);</p>
+<p>&nbsp; &nbsp; const zM = parseFloat(document.getElementById('proZ').value);</p>
+<p>&nbsp; &nbsp; for(let i=0; i&lt;geo.attributes.position.count; i++) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; const b = (data[i*4]+data[i*4+1]+data[i*4+2])/3;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; geo.attributes.position.setZ(i, (b/255)*zM*2);</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp; &nbsp; mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({color: 0xff6600, wireframe: true}));</p>
+<p>&nbsp; &nbsp; scene.add(mesh);</p>
+<p>&nbsp; &nbsp; camera.position.z = w;</p>
+<p>}</p>
+<p>&nbsp;</p>
+<p>function crearGCode(data, w, h, ratio) {</p>
+<p>&nbsp; &nbsp; const mmX = document.getElementById('anchoX').value;</p>
+<p>&nbsp; &nbsp; const mmY = (mmX * ratio).toFixed(2);</p>
+<p>&nbsp; &nbsp; const totalZ = parseFloat(document.getElementById('proZ').value);</p>
+<p>&nbsp; &nbsp; const stepZ = parseFloat(document.getElementById('stepZ').value);</p>
+<p>&nbsp; &nbsp;&nbsp;</p>
+<p>&nbsp; &nbsp; let g = "(WARES CNC PRO)\nG21\nG90\nG64\nM3 S15000\nG0 Z5\n";</p>
+<p>&nbsp; &nbsp; for(let cZ = stepZ; cZ &lt;= totalZ + 0.01; cZ += stepZ) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; let lim = Math.min(cZ, totalZ);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; for(let y=0; y&lt;h; y++) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; for(let x=0; x&lt;w; x++) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let i = (y*w+x)*4;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let b = (data[i]+data[i+1]+data[i+2])/3;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; let zV = Math.max(-((255-b)/255*totalZ), -lim).toFixed(3);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; g += `G1 X${(x*mmX/w).toFixed(2)} Y${(-(y*mmY/h)).toFixed(2)} Z${zV} F1000\n`;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp; &nbsp; g += "G0 Z10\nM30";</p>
+<p>&nbsp; &nbsp; const blob = new Blob([g], {type: 'text/plain'});</p>
+<p>&nbsp; &nbsp; const a = document.createElement('a');</p>
+<p>&nbsp; &nbsp; a.href = URL.createObjectURL(blob);</p>
+<p>&nbsp; &nbsp; a.download = "WARES_CNC_PROGRAMA.txt";</p>
+<p>&nbsp; &nbsp; document.body.appendChild(a); a.click(); document.body.removeChild(a);</p>
+<p>}</p>
+<p>init3D();</p>
+<p>window.onresize = () =&gt; { renderer.setSize(window.innerWidth - (window.innerWidth &gt; 768 ? 320 : 0), window.innerHeight); };</p>
+<p>&lt;/script&gt;</p>
+<p>&lt;/body&gt;</p>
+<p>&lt;/html&gt;</p>
+<p>&nbsp;</p></body></html>
